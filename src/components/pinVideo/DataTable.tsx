@@ -72,6 +72,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [editingIdx, setEditingIdx] = useState(-1);
 
     const [title, setTitle] = useState('');
+    const [youtubeLink, setYoutubeLink] = useState('');
 
     const handleClose = () => {
         setIsEditing(false);
@@ -121,7 +122,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
 
         const updateData = {
             id,
-            title,
+            name: title,
+            ytlink: youtubeLink,
         };
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -150,6 +152,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const editButtonHandler = (
         editedData: {
             title: string;
+            youtubeLink: string;
         },
         idx: number
     ) => {
@@ -157,6 +160,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setEditingIdx(idx);
 
         setTitle(editedData.title);
+        setYoutubeLink(editedData.youtubeLink);
     };
 
     // eslint-disable-next-line no-underscore-dangle
@@ -183,7 +187,14 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                         {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
                                 <StyledTableCell>
-                                    {row.videoLink ? (
+                                    {/* eslint-disable-next-line no-nested-ternary */}
+                                    {isEditing && editingIdx === idx ? (
+                                        <TextField
+                                            value={youtubeLink}
+                                            onChange={(e) => setYoutubeLink(e.target.value)}
+                                            className={classes.textField}
+                                        />
+                                    ) : row.videoLink ? (
                                         <a
                                             target="_blank"
                                             rel="noreferrer"
@@ -249,6 +260,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                 editButtonHandler(
                                                     {
                                                         title: row.title,
+                                                        youtubeLink: row.videoLink,
                                                     },
                                                     idx
                                                 )
