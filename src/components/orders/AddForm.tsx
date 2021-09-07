@@ -31,7 +31,6 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
     const [paymentStatus, setPaymentStatus] = useState('');
     const [qty, setQty] = useState<number | string>('');
     const [product, setProduct] = useState<string | null>(null);
-    // const [product, setProduct] = useState<{name: string, dis: string, price: number | string, image: string} | null>(null);
 
     const clearAll = () => {
         setName('');
@@ -146,11 +145,13 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
                                 value={paymentMethod}
                                 onChange={(e) => {
                                     if (typeof e.target.value === 'string') {
-                                        setPaymentMethod(e.target.value);
+                                        setPaymentMethod(
+                                            e.target.value === 'online' ? 'aonline' : e.target.value
+                                        );
                                     }
                                 }}
                             >
-                                {['COD', 'aonline'].map((p, index) => (
+                                {['COD', 'online'].map((p, index) => (
                                     // eslint-disable-next-line react/no-array-index-key
                                     <MenuItem key={index} value={p}>
                                         {p}
