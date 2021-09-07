@@ -334,14 +334,18 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                                 value={paymentMethod}
                                                 onChange={(e) => {
                                                     if (typeof e.target.value === 'string') {
-                                                        setPaymentMethod(e.target.value);
+                                                        setPaymentMethod(
+                                                            e.target.value === 'online'
+                                                                ? 'aonline'
+                                                                : e.target.value
+                                                        );
                                                     }
                                                 }}
                                                 displayEmpty
                                                 className={classes.textField}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                {['aonline', 'COD'].map((i) => (
+                                                {['online', 'COD'].map((i) => (
                                                     <MenuItem key={i} value={i}>
                                                         {i}
                                                     </MenuItem>
