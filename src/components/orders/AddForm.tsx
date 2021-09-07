@@ -25,7 +25,6 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [givenNumber, setGivenNumber] = useState('');
-    const [userNumber, setUserNumber] = useState('');
     const [tranID, setTranID] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
     const [paymentStatus, setPaymentStatus] = useState('');
@@ -38,7 +37,6 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
         setGivenNumber('');
         setQty('');
         setTranID('');
-        setUserNumber('');
         setPaymentMethod('');
         setPaymentStatus('');
         setProduct(null);
@@ -220,17 +218,6 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
                             fullWidth
                             value={givenNumber}
                             onChange={(e) => setGivenNumber(e.target.value)}
-                        />
-
-                        <TextField
-                            error={isSumbit && !userNumber}
-                            helperText={isSumbit && !userNumber ? 'Please add user number' : ''}
-                            margin="dense"
-                            name="userNumber"
-                            label="User Number"
-                            fullWidth
-                            value={userNumber}
-                            onChange={(e) => setUserNumber(e.target.value)}
                         />
 
                         <TextField
