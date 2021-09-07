@@ -3,7 +3,11 @@ import {
     CardActionArea,
     CardContent,
     CardMedia,
+    FormControl,
+    InputLabel,
     makeStyles,
+    MenuItem,
+    Select,
     // eslint-disable-next-line prettier/prettier
     Typography
 } from '@material-ui/core';
@@ -14,7 +18,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
-import Avatar from '../../assets/Avatar.jpg';
+import { ProductsData } from '../products/Products';
 
 interface Props {
     product: {
@@ -24,6 +28,10 @@ interface Props {
         price: number | string;
         image: string;
     };
+    isEditing?: boolean;
+    allProducts?: ProductsData[];
+    updatedProduct?: ProductsData | string | null;
+    setUpdatedProduct?: React.Dispatch<React.SetStateAction<string | ProductsData | null>>;
 }
 
 const useStyles = makeStyles({
@@ -38,7 +46,13 @@ const useStyles = makeStyles({
     },
 });
 
-const OrderedProduct: React.FC<Props> = ({ product }): React.ReactElement => {
+const OrderedProduct: React.FC<Props> = ({
+    product,
+    isEditing,
+    allProducts,
+    updatedProduct,
+    setUpdatedProduct,
+}): React.ReactElement => {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
@@ -87,40 +101,68 @@ const OrderedProduct: React.FC<Props> = ({ product }): React.ReactElement => {
                         ref={descriptionElementRef}
                         tabIndex={-1}
                     >
-                        <Card className={classes.root}>
-                            <CardActionArea>
-                                <CardMedia
-                                    className={classes.media}
-                                    image={product.image || Avatar}
-                                    title="Product"
-                                />
+                        {isEditing ? (
+                            <FormControl fullWidth>
+                                <InputLabel>Select a product</InputLabel>
+                                <Select
+                                    value={updatedProduct}
+                                    onChange={(e) => {
+                                        if (
+                                            typeof e.target.value === 'string' &&
+                                            setUpdatedProduct !== undefined
+                                        ) {
+                                            setUpdatedProduct(e.target.value);
+                                            handleClose();
+                                        }
+                                    }}
+                                >
+                                    {allProducts?.map((p, index) => (
+                                        // eslint-disable-next-line react/no-array-index-key
+                                        <MenuItem key={index} value={JSON.stringify(p)}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <img src={p.image} alt="" width={50} height={50} />
+                                                <span style={{ marginLeft: 10 }}>{p.name}</span>
+                                            </div>
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        ) : (
+                            <Card className={classes.root}>
+                                <CardActionArea>
+                                    <CardMedia
+                                        className={classes.media}
+                                        image={product.image}
+                                        title="Product"
+                                    />
 
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="h2">
-                                        {product.name}
-                                    </Typography>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="h2">
+                                            {product.name}
+                                        </Typography>
 
-                                    <Typography>
-                                        <Typography
-                                            variant="h6"
-                                            color="textPrimary"
-                                            style={{ fontSize: 16, display: 'inline-block' }}
-                                        >
-                                            Price:
-                                        </Typography>{' '}
-                                        {product.price} <br />
-                                        <Typography
-                                            variant="h6"
-                                            color="textPrimary"
-                                            style={{ fontSize: 16, display: 'inline-block' }}
-                                        >
-                                            Description:
-                                        </Typography>{' '}
-                                        {product.dis}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
+                                        <Typography>
+                                            <Typography
+                                                variant="h6"
+                                                color="textPrimary"
+                                                style={{ fontSize: 16, display: 'inline-block' }}
+                                            >
+                                                Price:
+                                            </Typography>{' '}
+                                            {product.price} <br />
+                                            <Typography
+                                                variant="h6"
+                                                color="textPrimary"
+                                                style={{ fontSize: 16, display: 'inline-block' }}
+                                            >
+                                                Description:
+                                            </Typography>{' '}
+                                            {product.dis}
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                        )}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

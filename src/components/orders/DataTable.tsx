@@ -13,11 +13,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import React, { useState } from 'react';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
+import { ProductsData } from '../products/Products';
+import AddForm from './AddForm';
 import OrderedProduct from './OrderedProduct';
 import { OrdersData } from './Orders';
 
 interface Props {
     apiData: OrdersData[];
+    products: ProductsData[];
     forceUpdate: () => void;
 }
 
@@ -86,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElement => {
+const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.ReactElement => {
     const classes = useStyles();
 
     const [isEditing, setIsEditing] = useState(false);
@@ -102,6 +105,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [paymentMethod, setPaymentMethod] = useState('');
     const [paymentStatus, setPaymentStatus] = useState('');
     const [orderStatus, setOrderStatus] = useState('');
+    const [updatedProduct, setUpdatedProduct] = useState<string | ProductsData | null>(null);
 
     const handleClose = () => {
         setIsEditing(false);
@@ -118,6 +122,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setPaymentMethod('');
         setPaymentStatus('');
         setOrderStatus('');
+        setUpdatedProduct(null);
         setIsSubmit(false);
     };
 
@@ -132,7 +137,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             !userNumber ||
             !paymentMethod ||
             !paymentStatus ||
-            !orderStatus
+            !orderStatus ||
+            !updatedProduct
         )
             return;
 
@@ -149,6 +155,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             paymentMethod,
             paymentStatus,
             orderStatus,
+            product:
+                typeof updatedProduct === 'string' ? JSON.parse(updatedProduct) : updatedProduct,
         };
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -185,6 +193,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             paymentMethod: string;
             paymentStatus: string;
             orderStatus: string;
+            product: ProductsData;
         },
         idx: number
     ) => {
@@ -199,6 +208,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setPaymentMethod(editedData.paymentMethod);
         setPaymentStatus(editedData.paymentStatus);
         setOrderStatus(editedData.orderStatus);
+        setUpdatedProduct(editedData.product);
     };
 
     const rows = apiData.map((data) =>
@@ -221,6 +231,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     return (
         <>
             <Loader open={isLoading} />
+
+            <AddForm products={products} forceUpdate={forceUpdate} />
 
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="customized table">
@@ -246,7 +258,13 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                             <StyledTableRow key={row.id}>
                                 {/* <StyledTableCell component="th" scope="row"> */}
                                 <StyledTableCell>
-                                    <OrderedProduct product={row.product} />
+                                    <OrderedProduct
+                                        product={row.product}
+                                        isEditing={isEditing && editingIdx === idx}
+                                        allProducts={products}
+                                        updatedProduct={updatedProduct}
+                                        setUpdatedProduct={setUpdatedProduct}
+                                    />
                                 </StyledTableCell>
 
                                 <StyledTableCell align="right">
@@ -445,6 +463,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                         paymentMethod: row.paymentMethod,
                                                         paymentStatus: row.paymentStatus,
                                                         orderStatus: row.orderStatus,
+                                                        product: row.product,
                                                     },
                                                     idx
                                                 )

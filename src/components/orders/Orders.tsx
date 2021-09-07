@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AppLayout from '../../container/appLayout/AppLayout';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
+import { ProductsData } from '../products/Products';
 import DataTable from './DataTable';
 
 export interface OrdersData {
@@ -28,6 +29,7 @@ export interface OrdersData {
 
 const Orders = () => {
     const [apiData, setApiData] = useState<OrdersData[]>([]);
+    const [products, setProducts] = useState<ProductsData[]>([]);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -42,13 +44,18 @@ const Orders = () => {
             setIsLoading(true);
 
             try {
-                const response = await axios.get('/shop/order', {
+                const ordersResponse = await axios.get('/shop/order', {
                     headers: { Authorization: token },
                 });
 
-                if (response) setIsLoading(false);
+                const productsResponse = await axios.get('/shop', {
+                    headers: { Authorization: token },
+                });
 
-                setApiData(response.data);
+                if (ordersResponse && productsResponse) setIsLoading(false);
+
+                setApiData(ordersResponse.data);
+                setProducts(productsResponse.data.data);
             } catch (err) {
                 setIsLoading(false);
                 // eslint-disable-next-line no-alert
@@ -61,7 +68,7 @@ const Orders = () => {
     return (
         <AppLayout dawerOpen shopOpen>
             <Loader open={isLoading} />
-            <DataTable apiData={apiData} forceUpdate={forceUpdate} />
+            <DataTable apiData={apiData} products={products} forceUpdate={forceUpdate} />
         </AppLayout>
     );
 };
