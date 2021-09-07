@@ -76,7 +76,7 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
 
         const reqData = {
             tranID,
-            paymentMethod,
+            paymentMethod: paymentMethod === 'online' ? 'aonline' : paymentMethod,
             paymentStatus,
             name,
             address,
@@ -143,9 +143,7 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
                                 value={paymentMethod}
                                 onChange={(e) => {
                                     if (typeof e.target.value === 'string') {
-                                        setPaymentMethod(
-                                            e.target.value === 'online' ? 'aonline' : e.target.value
-                                        );
+                                        setPaymentMethod(e.target.value);
                                     }
                                 }}
                             >

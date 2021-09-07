@@ -152,7 +152,7 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
             address,
             qty,
             userNumber,
-            paymentMethod,
+            paymentMethod: paymentMethod === 'online' ? 'aonline' : paymentMethod,
             paymentStatus,
             orderStatus,
             product:
@@ -334,11 +334,7 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                                 value={paymentMethod}
                                                 onChange={(e) => {
                                                     if (typeof e.target.value === 'string') {
-                                                        setPaymentMethod(
-                                                            e.target.value === 'online'
-                                                                ? 'aonline'
-                                                                : e.target.value
-                                                        );
+                                                        setPaymentMethod(e.target.value);
                                                     }
                                                 }}
                                                 displayEmpty
