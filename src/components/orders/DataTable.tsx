@@ -327,6 +327,7 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                 </StyledTableCell>
 
                                 <StyledTableCell align="right">
+                                    {/* eslint-disable-next-line no-nested-ternary */}
                                     {isEditing && editingIdx === idx ? (
                                         <FormControl className={classes.formControl}>
                                             <Select
@@ -340,13 +341,15 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                                 className={classes.textField}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                {['online', 'cod'].map((i) => (
+                                                {['aonline', 'COD'].map((i) => (
                                                     <MenuItem key={i} value={i}>
                                                         {i}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
                                         </FormControl>
+                                    ) : row.paymentMethod === 'aonline' ? (
+                                        'online'
                                     ) : (
                                         row.paymentMethod
                                     )}

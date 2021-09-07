@@ -28,6 +28,7 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
     const [userNumber, setUserNumber] = useState('');
     const [tranID, setTranID] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
+    const [paymentStatus, setPaymentStatus] = useState('');
     const [qty, setQty] = useState<number | string>('');
     const [product, setProduct] = useState<string | null>(null);
     // const [product, setProduct] = useState<{name: string, dis: string, price: number | string, image: string} | null>(null);
@@ -40,6 +41,7 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
         setTranID('');
         setUserNumber('');
         setPaymentMethod('');
+        setPaymentStatus('');
         setProduct(null);
         setIsSubmit(false);
     };
@@ -60,10 +62,10 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
         if (
             !tranID ||
             !paymentMethod ||
+            !paymentStatus ||
             !name ||
             !address ||
             !givenNumber ||
-            !userNumber ||
             !qty ||
             !product
         )
@@ -78,10 +80,10 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
         const reqData = {
             tranID,
             paymentMethod,
+            paymentStatus,
             name,
             address,
             givenNumber,
-            userNumber,
             qty,
             product: JSON.parse(product),
         };
@@ -148,22 +150,45 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
                                     }
                                 }}
                             >
-                                {['cod', 'online'].map((p, index) => (
+                                {['COD', 'aonline'].map((p, index) => (
                                     // eslint-disable-next-line react/no-array-index-key
                                     <MenuItem key={index} value={p}>
                                         {p}
                                     </MenuItem>
                                 ))}
                             </Select>
-                            {isSumbit && !product ? (
+                            {isSumbit && !paymentMethod ? (
                                 <FormHelperText>Please select a payment method</FormHelperText>
                             ) : (
                                 ''
                             )}
                         </FormControl>
 
+                        <FormControl fullWidth error={isSumbit && !paymentStatus}>
+                            <InputLabel>Select payment status</InputLabel>
+                            <Select
+                                value={paymentStatus}
+                                onChange={(e) => {
+                                    if (typeof e.target.value === 'string') {
+                                        setPaymentStatus(e.target.value);
+                                    }
+                                }}
+                            >
+                                {['paid', 'unpaid'].map((p, index) => (
+                                    // eslint-disable-next-line react/no-array-index-key
+                                    <MenuItem key={index} value={p}>
+                                        {p}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            {isSumbit && !paymentStatus ? (
+                                <FormHelperText>Please select a payment status</FormHelperText>
+                            ) : (
+                                ''
+                            )}
+                        </FormControl>
+
                         <TextField
-                            autoFocus
                             error={isSumbit && !name}
                             helperText={isSumbit && !name ? 'Please add a name' : ''}
                             margin="dense"
