@@ -42,12 +42,13 @@ const ShowFullContent: React.FC<Props> = ({ title, content }): React.ReactElemen
                 style={{ margin: 0, padding: 0, textTransform: 'unset', display: 'inline' }}
                 onClick={handleClickOpen('body')}
             >
-                See more
+                See full content
             </Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
                 scroll={scroll}
+                maxWidth="xl"
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >

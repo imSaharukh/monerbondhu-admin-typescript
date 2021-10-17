@@ -297,15 +297,10 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                             setBigContent={setContent}
                                         />
                                     ) : row.content?.length > 12 ? (
-                                        <>
-                                            <div className={classes.content}>
-                                                {parse(row.content || '')}
-                                            </div>
-                                            <ShowFullContent
-                                                title="Content"
-                                                content={parse(row.content || '')}
-                                            />
-                                        </>
+                                        <ShowFullContent
+                                            title="Content"
+                                            content={parse(row.content || '')}
+                                        />
                                     ) : (
                                         <div className={classes.content}>
                                             {parse(row.content || '')}
