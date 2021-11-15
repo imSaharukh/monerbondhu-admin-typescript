@@ -54,7 +54,7 @@ const Orders = () => {
 
                 if (ordersResponse && productsResponse) setIsLoading(false);
 
-                setApiData(ordersResponse.data);
+                setApiData([...ordersResponse.data].reverse());
                 setProducts(productsResponse.data.data);
             } catch (err) {
                 setIsLoading(false);

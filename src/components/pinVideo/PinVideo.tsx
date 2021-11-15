@@ -33,7 +33,7 @@ const PinVideo = () => {
 
                 if (response) setIsLoading(false);
 
-                setApiData(response.data.data);
+                setApiData([...response.data.data].reverse());
             } catch (err) {
                 setIsLoading(false);
                 // eslint-disable-next-line no-alert

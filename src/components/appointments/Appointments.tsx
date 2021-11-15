@@ -58,8 +58,8 @@ const Appointments = () => {
 
                 if (response1 && response2) setIsLoading(false);
 
-                setApiData(response1.data);
-                setConsultants(response2.data.data);
+                setApiData([...response1.data].reverse());
+                setConsultants([...response2.data.data].reverse());
             } catch (err) {
                 setIsLoading(false);
                 // eslint-disable-next-line no-alert
