@@ -31,3 +31,7 @@ a:focus {
   width: 100%;
   /* max-width: 700px; */
 }
+
+.ql-container {
+  min-height: 200px;
+}
