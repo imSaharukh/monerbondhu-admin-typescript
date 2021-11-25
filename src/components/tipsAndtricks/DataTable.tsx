@@ -1,4 +1,6 @@
+/* eslint-disable no-alert */
 import { TextField } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,6 +13,7 @@ import { DeleteForever } from '@material-ui/icons';
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import EditIcon from '@material-ui/icons/Edit';
+import ImageIcon from '@material-ui/icons/Image';
 import parse from 'html-react-parser';
 import React, { useState } from 'react';
 import Avatar from '../../assets/Avatar.jpg';
@@ -78,6 +81,10 @@ const useStyles = makeStyles({
             fontSize: 13,
         },
     },
+    button: {
+        fontSize: 10,
+        paddingLeft: 10,
+    },
     content: {
         width: 80,
         maxWidth: '100%',
@@ -105,6 +112,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [image, setImage] = useState<File | null>(null);
 
     const handleClose = () => {
         setIsEditing(false);
@@ -114,9 +122,15 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const clearAll = () => {
         setTitle('');
         setContent('');
+        setImage(null);
     };
 
     const handleDelete = async (id: string) => {
+        // eslint-disable-next-line no-restricted-globals
+        if (!confirm('Are you sure you want to delete this element?')) {
+            return;
+        }
+
         setIsLoading(true);
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -131,7 +145,6 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
 
             if (response) {
                 setIsLoading(false);
-                // eslint-disable-next-line no-alert
                 alert('Deleted Successfully');
                 forceUpdate();
             }
@@ -153,13 +166,35 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setEditingIdx(-1);
         setIsLoading(true);
 
-        const updateData = {
+        const token = `Bearer ${localStorage.getItem('token')}`;
+
+        let imageUrl = '';
+
+        if (image !== null) {
+            const formData = new FormData();
+            formData.append('image', image);
+
+            const response = await axios.post('/upload', formData, {
+                headers: { Authorization: token },
+            });
+
+            imageUrl = response.data.image;
+        }
+
+        const updateData: {
+            id: string;
+            title: string;
+            content: string;
+            image?: string;
+        } = {
             id,
             title,
             content,
         };
 
-        const token = `Bearer ${localStorage.getItem('token')}`;
+        if (imageUrl) {
+            updateData.image = imageUrl;
+        }
 
         try {
             const response = await axios.patch('/tipsamdtricks', updateData, {
@@ -235,7 +270,44 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                         {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
                                 <StyledTableCell>
-                                    {row.isVideo && row.videoLink ? (
+                                    {/* eslint-disable-next-line no-nested-ternary */}
+                                    {isEditing && editingIdx === idx ? (
+                                        <span style={{ display: 'block', marginTop: 15 }}>
+                                            <input
+                                                color="primary"
+                                                accept="image/*"
+                                                type="file"
+                                                onChange={(e) => {
+                                                    if (
+                                                        e.target.files &&
+                                                        e.target.files.length > 0
+                                                    ) {
+                                                        setImage(e.target.files[0]);
+                                                    }
+                                                }}
+                                                id="icon-button-file"
+                                                hidden
+                                            />
+                                            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                                            <label htmlFor="icon-button-file">
+                                                <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    className={classes.button}
+                                                    size="large"
+                                                    fullWidth
+                                                    color="primary"
+                                                    endIcon={<ImageIcon />}
+                                                    style={{
+                                                        textTransform: 'capitalize',
+                                                        margin: 'unset',
+                                                    }}
+                                                >
+                                                    Change Image
+                                                </Button>
+                                            </label>
+                                        </span>
+                                    ) : row.isVideo && row.videoLink ? (
                                         <a
                                             target="_blank"
                                             rel="noreferrer"

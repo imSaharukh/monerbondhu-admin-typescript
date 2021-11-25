@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import { TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -93,6 +94,11 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     };
 
     const handleDelete = async (id: string) => {
+        // eslint-disable-next-line no-restricted-globals
+        if (!confirm('Are you sure you want to delete this element?')) {
+            return;
+        }
+
         setIsLoading(true);
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -120,7 +126,6 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
 
     const handleEdit = async (id: string) => {
         if (!title) {
-            // eslint-disable-next-line no-alert
             alert('Empty field is not taken');
             return;
         }

@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -61,6 +62,11 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [isLoading, setIsLoading] = useState(false);
 
     const handleDelete = async (id: string) => {
+        // eslint-disable-next-line no-restricted-globals
+        if (!confirm('Are you sure you want to delete this element?')) {
+            return;
+        }
+
         setIsLoading(true);
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -75,7 +81,6 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
 
             if (response) {
                 setIsLoading(false);
-                // eslint-disable-next-line no-alert
                 alert('Deleted Successfully');
                 forceUpdate();
             }
