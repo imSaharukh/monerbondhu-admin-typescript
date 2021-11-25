@@ -21,6 +21,7 @@ export interface AppointmentData {
 
 export interface ConsultantData {
     name: string;
+    visitingDays: [string];
     service: [
         {
             name: string;

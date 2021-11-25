@@ -215,12 +215,7 @@ const DataTable: React.FC<Props> = ({ apiData, consultants, forceUpdate }): Reac
                                 <StyledTableCell align="left">{row.consultant}</StyledTableCell>
                                 <StyledTableCell align="left">{row.service}</StyledTableCell>
                                 <StyledTableCell align="left">
-                                    <span style={{ fontWeight: 'bold' }}>Date: </span>
-                                    {new Date(row.appointmentDate).toLocaleDateString('en-US')}
-                                    <div>
-                                        <span style={{ fontWeight: 'bold' }}>Time: </span>
-                                        {new Date(row.appointmentDate).toLocaleTimeString('en-US')}
-                                    </div>
+                                    {row.appointmentDate}
                                 </StyledTableCell>
                                 <StyledTableCell align="left">
                                     {row.appointmentTime}

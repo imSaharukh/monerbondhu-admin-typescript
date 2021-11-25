@@ -1,5 +1,7 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-nested-ternary */
 import { FormControl, MenuItem, Select, TextField } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -12,6 +14,7 @@ import { DeleteForever } from '@material-ui/icons';
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import EditIcon from '@material-ui/icons/Edit';
+import ImageIcon from '@material-ui/icons/Image';
 import parse from 'html-react-parser';
 import React, { useState } from 'react';
 import axios from '../../utils/axios';
@@ -21,6 +24,7 @@ import ShowFullContent from '../../utils/ShowFullContent';
 import AddForm from './addForm/AddForm';
 import { ConsultantData } from './Consultant';
 import EditService from './EditService';
+import EditVisitingDays from './EditVisitingDays';
 import Image from './Image';
 import ShowService from './ShowService';
 
@@ -54,8 +58,9 @@ const createData = (
     image: string,
     name: string,
     designation: string,
-    visitingDay: string,
-    time: string,
+    visitingDays: string[],
+    timeFrom: string,
+    timeTo: string,
     review: number | string,
     reviewCount: number,
     description: string,
@@ -73,8 +78,9 @@ const createData = (
     image,
     name,
     designation,
-    visitingDay,
-    time,
+    visitingDays,
+    timeFrom,
+    timeTo,
     review,
     reviewCount,
     description,
@@ -91,6 +97,11 @@ const useStyles = makeStyles((theme) => ({
         '& > *': {
             marginTop: '0px !important',
         },
+    },
+    button: {
+        margin: theme.spacing(1),
+        fontSize: 10,
+        paddingLeft: 10,
     },
     selectEmpty: {
         marginTop: theme.spacing(2),
@@ -130,10 +141,12 @@ const DataTable: React.FC<Props> = ({
     const [editingIdx, setEditingIdx] = useState(-1);
     const [isLoading, setIsLoading] = useState(false);
 
+    const [image, setImage] = useState<File | null>(null);
     const [name, setName] = useState('');
     const [designation, setDesignation] = useState('');
-    const [visitingDay, setVisitingDay] = useState('');
-    const [time, setTime] = useState('');
+    const [visitingDays, setVisitingDays] = useState<string[]>([]);
+    const [timeFrom, setTimeFrom] = useState('');
+    const [timeTo, setTimeTo] = useState('');
     const [description, setDescription] = useState('');
     const [newServices, setNewServices] = useState<
         {
@@ -151,15 +164,22 @@ const DataTable: React.FC<Props> = ({
     };
 
     const clearAll = () => {
+        setImage(null);
         setName('');
         setDesignation('');
-        setVisitingDay('');
-        setTime('');
+        setVisitingDays([]);
+        setTimeFrom('');
+        setTimeTo('');
         setDescription('');
         setNewServices([]);
     };
 
     const handleDelete = async (id: string) => {
+        // eslint-disable-next-line no-restricted-globals
+        if (!confirm('Are you sure you want to delete this element?')) {
+            return;
+        }
+
         setIsLoading(true);
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -180,13 +200,12 @@ const DataTable: React.FC<Props> = ({
             }
         } catch (err) {
             setIsLoading(false);
-            // eslint-disable-next-line no-alert
             alert(err?.response?.data?.message ?? 'Something went wrong');
         }
     };
 
     const handleEdit = async (id: string) => {
-        if (!name || !designation || !visitingDay || !time || !description) {
+        if (!name || !designation || !visitingDays.length || !timeFrom || !timeTo || !description) {
             // eslint-disable-next-line no-alert
             alert('Empty field is not taken');
             return;
@@ -196,16 +215,43 @@ const DataTable: React.FC<Props> = ({
         setEditingIdx(-1);
         setIsLoading(true);
 
-        const updateData = {
+        const token = `Bearer ${localStorage.getItem('token')}`;
+
+        let imageUrl = '';
+
+        if (image !== null) {
+            const formData = new FormData();
+            formData.append('image', image);
+
+            const response = await axios.post('/upload', formData, {
+                headers: { Authorization: token },
+            });
+
+            imageUrl = response.data.image;
+        }
+
+        const updateData: {
+            name: string;
+            designation: string;
+            visitingDays: string;
+            timeFrom: string;
+            timeTo: string;
+            description: string;
+            service: any[];
+            image?: string;
+        } = {
             name,
             designation,
-            visitingDay,
-            time,
+            visitingDays: JSON.stringify(visitingDays),
+            timeFrom,
+            timeTo,
             description,
             service: newServices,
         };
 
-        const token = `Bearer ${localStorage.getItem('token')}`;
+        if (imageUrl) {
+            updateData.image = imageUrl;
+        }
 
         try {
             const response = await axios.patch(`/consultent/${id}`, updateData, {
@@ -232,8 +278,9 @@ const DataTable: React.FC<Props> = ({
         editedData: {
             name: string;
             designation: string;
-            visitingDay: string;
-            time: string;
+            visitingDays: string[];
+            timeFrom: string;
+            timeTo: string;
             description: string;
         },
         idx: number
@@ -243,8 +290,9 @@ const DataTable: React.FC<Props> = ({
 
         setName(editedData.name);
         setDesignation(editedData.designation);
-        setVisitingDay(editedData.visitingDay);
-        setTime(editedData.time);
+        setVisitingDays(editedData.visitingDays);
+        setTimeFrom(editedData.timeFrom);
+        setTimeTo(editedData.timeTo);
         setDescription(editedData.description);
     };
 
@@ -255,8 +303,9 @@ const DataTable: React.FC<Props> = ({
             data.image,
             data.name,
             data.designation,
-            data.visitingDay,
-            data.time,
+            data.visitingDays,
+            data.timeFrom,
+            data.timeTo,
             data.review,
             data.reviewCount,
             data.description,
@@ -281,8 +330,9 @@ const DataTable: React.FC<Props> = ({
                             <StyledTableCell>Image</StyledTableCell>
                             <StyledTableCell>Name</StyledTableCell>
                             <StyledTableCell>Designation</StyledTableCell>
-                            <StyledTableCell>Visiting Day</StyledTableCell>
-                            <StyledTableCell>Visiting Time</StyledTableCell>
+                            <StyledTableCell>Visiting Days</StyledTableCell>
+                            <StyledTableCell>Time From</StyledTableCell>
+                            <StyledTableCell>Time To</StyledTableCell>
                             <StyledTableCell>Review</StyledTableCell>
                             <StyledTableCell>Review Count</StyledTableCell>
                             <StyledTableCell>Description</StyledTableCell>
@@ -296,7 +346,45 @@ const DataTable: React.FC<Props> = ({
                         {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
                                 <StyledTableCell>
-                                    <Image name={row.name} image={row.image} />
+                                    {isEditing && editingIdx === idx ? (
+                                        <span style={{ display: 'block', marginTop: 15 }}>
+                                            <input
+                                                color="primary"
+                                                accept="image/*"
+                                                type="file"
+                                                onChange={(e) => {
+                                                    if (
+                                                        e.target.files &&
+                                                        e.target.files.length > 0
+                                                    ) {
+                                                        setImage(e.target.files[0]);
+                                                    }
+                                                }}
+                                                id="icon-button-file"
+                                                hidden
+                                            />
+                                            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                                            <label htmlFor="icon-button-file">
+                                                <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    className={classes.button}
+                                                    size="large"
+                                                    fullWidth
+                                                    color="primary"
+                                                    endIcon={<ImageIcon />}
+                                                    style={{
+                                                        textTransform: 'capitalize',
+                                                        margin: 'unset',
+                                                    }}
+                                                >
+                                                    Change Image
+                                                </Button>
+                                            </label>
+                                        </span>
+                                    ) : (
+                                        <Image name={row.name} image={row.image} />
+                                    )}
                                 </StyledTableCell>
 
                                 <StyledTableCell>
@@ -340,28 +428,27 @@ const DataTable: React.FC<Props> = ({
 
                                 <StyledTableCell>
                                     {isEditing && editingIdx === idx ? (
-                                        <TextField
-                                            id="date"
-                                            type="date"
-                                            defaultValue={visitingDay}
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            className={classes.textField}
-                                            value={visitingDay}
-                                            onChange={(e) => setVisitingDay(e.target.value)}
+                                        <EditVisitingDays
+                                            availableDays={JSON.parse(row.visitingDays[0])}
+                                            setVisitingDays={setVisitingDays}
                                         />
                                     ) : (
-                                        row.visitingDay
+                                        row.visitingDays.map((dayNames) => (
+                                            <ul key={dayNames}>
+                                                {[...JSON.parse(dayNames)].map((day) => (
+                                                    <li key={day}>{day}</li>
+                                                ))}
+                                            </ul>
+                                        ))
                                     )}
                                 </StyledTableCell>
 
                                 <StyledTableCell>
                                     {isEditing && editingIdx === idx ? (
                                         <TextField
-                                            id="time"
+                                            id="timeFrom"
                                             type="time"
-                                            defaultValue={time}
+                                            defaultValue={timeFrom}
                                             className={classes.textField}
                                             InputLabelProps={{
                                                 shrink: true,
@@ -369,11 +456,32 @@ const DataTable: React.FC<Props> = ({
                                             inputProps={{
                                                 step: 300, // 5 min
                                             }}
-                                            value={time}
-                                            onChange={(e) => setTime(e.target.value)}
+                                            value={timeFrom}
+                                            onChange={(e) => setTimeFrom(e.target.value)}
                                         />
                                     ) : (
-                                        row.time
+                                        row.timeFrom
+                                    )}
+                                </StyledTableCell>
+
+                                <StyledTableCell>
+                                    {isEditing && editingIdx === idx ? (
+                                        <TextField
+                                            id="timeTo"
+                                            type="time"
+                                            defaultValue={timeTo}
+                                            className={classes.textField}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            inputProps={{
+                                                step: 300, // 5 min
+                                            }}
+                                            value={timeTo}
+                                            onChange={(e) => setTimeTo(e.target.value)}
+                                        />
+                                    ) : (
+                                        row.timeTo
                                     )}
                                 </StyledTableCell>
 
@@ -442,8 +550,11 @@ const DataTable: React.FC<Props> = ({
                                                     {
                                                         name: row.name,
                                                         designation: row.designation,
-                                                        visitingDay: row.visitingDay,
-                                                        time: row.time,
+                                                        visitingDays: JSON.parse(
+                                                            row.visitingDays[0]
+                                                        ),
+                                                        timeFrom: row.timeFrom,
+                                                        timeTo: row.timeTo,
                                                         description: row.description,
                                                     },
                                                     idx

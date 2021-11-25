@@ -10,8 +10,9 @@ export interface ConsultantData {
     _id: string;
     name: string;
     description: string;
-    visitingDay: string;
-    time: string;
+    visitingDays: [string];
+    timeFrom: string;
+    timeTo: string;
     designation: string;
     image: string;
     service: [
@@ -48,6 +49,8 @@ const Consultant = () => {
                 });
 
                 if (response) setIsLoading(false);
+
+                console.log(response.data);
 
                 setApiData([...response.data.data].reverse());
                 setDesignations(response.data.designations);

@@ -1,10 +1,14 @@
 import {
     Divider,
     FormControl,
+    FormControlLabel,
     FormHelperText,
+    FormLabel,
     InputLabel,
     makeStyles,
     MenuItem,
+    Radio,
+    RadioGroup,
     Select,
     // eslint-disable-next-line prettier/prettier
     Typography
@@ -43,8 +47,7 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
     const [open, setOpen] = React.useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // eslint-disable-next-line no-undef
-    const [consultant, setConsultant] = useState<string | null | unknown>(null);
+    const [consultantName, setConsultantName] = useState<any>(null);
     const [date, setDate] = useState<string | null>(null);
     const [time, setTime] = useState<string | null>(null);
     // eslint-disable-next-line no-undef
@@ -60,7 +63,7 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
     const [idx, setIdx] = useState<number>(-1);
 
     const clearAll = () => {
-        setConsultant(null);
+        setConsultantName(null);
         setDate(null);
         setTime(null);
         setService(null);
@@ -86,7 +89,7 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
         setIsSubmit(true);
 
         if (
-            !consultant ||
+            !consultantName ||
             !date ||
             !time ||
             !service ||
@@ -112,7 +115,7 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
             gender,
             dob,
             story,
-            consultantName: consultant,
+            consultantName,
             service: JSON.parse(service),
         };
 
@@ -147,14 +150,14 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                     <DialogContent>
                         <Typography>Appointment Details</Typography>
 
-                        <FormControl fullWidth error={isSumbit && !consultant}>
+                        <FormControl fullWidth error={isSumbit && !consultantName}>
                             <InputLabel>Select Consultant</InputLabel>
                             <Select
                                 autoFocus
-                                value={consultant}
+                                value={consultantName}
                                 onChange={(e) => {
                                     // setIdx(+e.currentTarget.dataset.id);
-                                    setConsultant(e.target.value);
+                                    setConsultantName(e.target.value);
                                 }}
                             >
                                 {consultants?.map((c, index) => (
@@ -178,7 +181,7 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                                     </MenuItem>
                                 ))}
                             </Select>
-                            {isSumbit && !consultant ? (
+                            {isSumbit && !consultantName ? (
                                 <FormHelperText>Please select a consultant</FormHelperText>
                             ) : (
                                 ''
@@ -209,8 +212,8 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                             )}
                         </FormControl>
 
-                        <form className={classes.container} noValidate>
-                            <TextField
+                        <form noValidate>
+                            {/* <TextField
                                 id="date"
                                 label="Select Date"
                                 type="date"
@@ -223,7 +226,29 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                            />
+                            /> */}
+                            <FormLabel component="div" style={{ marginTop: 25 }}>
+                                Select Date
+                            </FormLabel>
+                            <RadioGroup
+                                aria-label="gender"
+                                name="controlled-radio-buttons-group"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                            >
+                                {consultants[idx] &&
+                                    consultants[idx].visitingDays[0] &&
+                                    JSON.parse(consultants[idx].visitingDays[0]).map(
+                                        (day: string) => (
+                                            <FormControlLabel
+                                                key={day}
+                                                value={day}
+                                                control={<Radio />}
+                                                label={day}
+                                            />
+                                        )
+                                    )}
+                            </RadioGroup>
                         </form>
 
                         <form className={classes.container} noValidate>
