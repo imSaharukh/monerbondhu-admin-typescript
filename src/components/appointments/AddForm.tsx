@@ -243,7 +243,7 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                                             <FormControlLabel
                                                 key={day}
                                                 value={day}
-                                                control={<Radio />}
+                                                control={<Radio size="small" />}
                                                 label={day}
                                             />
                                         )
@@ -254,7 +254,23 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                         <form className={classes.container} noValidate>
                             <TextField
                                 id="time"
-                                label="Select Time"
+                                fullWidth
+                                label={
+                                    <div
+                                        style={{
+                                            width: 300,
+                                        }}
+                                    >
+                                        Select Time from
+                                        <span style={{ color: 'orangered', margin: '0 5px' }}>
+                                            {consultants[idx].timeFrom}
+                                        </span>
+                                        to
+                                        <span style={{ color: 'orangered', margin: '0 5px' }}>
+                                            {consultants[idx].timeTo}
+                                        </span>
+                                    </div>
+                                }
                                 type="time"
                                 // defaultValue="07:30"
                                 error={isSumbit && !time}
