@@ -50,7 +50,6 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
     const [consultantName, setConsultantName] = useState<any>(null);
     const [date, setDate] = useState<string | null>(null);
     const [time, setTime] = useState<string | null>(null);
-    // eslint-disable-next-line no-undef
     const [service, setService] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
     const [number, setNumber] = useState<string | null>(null);
@@ -109,14 +108,14 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
 
         const reqData = {
             name,
-            givenMobileNumber: number,
+            userNumber: number,
             appointmentDate: date,
             appointmentTime: time,
             gender,
             dob,
             story,
             consultantName,
-            service: JSON.parse(service),
+            service,
         };
 
         try {
@@ -200,8 +199,12 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                                     }}
                                 >
                                     {consultants[idx]?.service.map((s, index) => (
-                                        // eslint-disable-next-line react/no-array-index-key
-                                        <MenuItem key={index} value={JSON.stringify(s)}>
+                                        // <MenuItem key={index} value={JSON.stringify(s)}>
+                                        <MenuItem
+                                            // eslint-disable-next-line react/no-array-index-key
+                                            key={index}
+                                            value={`${s.name}-${s.mode}-${s.duration}-${s.fee}`}
+                                        >
                                             {`${s.name}-${s.mode}-${s.duration}-${s.fee}`}
                                         </MenuItem>
                                     ))}

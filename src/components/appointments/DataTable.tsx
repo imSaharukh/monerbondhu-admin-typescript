@@ -188,7 +188,7 @@ const DataTable: React.FC<Props> = ({ apiData, consultants, forceUpdate }): Reac
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>Name</StyledTableCell>
-                            <StyledTableCell align="left">Given Number</StyledTableCell>
+                            <StyledTableCell align="left">User Number</StyledTableCell>
                             <StyledTableCell align="left">Consultant</StyledTableCell>
                             <StyledTableCell align="left">Service</StyledTableCell>
                             <StyledTableCell align="left">Appointment Date</StyledTableCell>
@@ -209,7 +209,7 @@ const DataTable: React.FC<Props> = ({ apiData, consultants, forceUpdate }): Reac
                                 <StyledTableCell component="th" scope="row">
                                     {row.name}
                                 </StyledTableCell>
-                                <StyledTableCell align="left">{row.givenNumber}</StyledTableCell>
+                                <StyledTableCell align="left">{row.userNumber}</StyledTableCell>
                                 <StyledTableCell align="left">{row.consultant}</StyledTableCell>
                                 <StyledTableCell align="left">{row.service}</StyledTableCell>
                                 <StyledTableCell align="left">
