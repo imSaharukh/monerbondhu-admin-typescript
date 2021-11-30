@@ -6,6 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
+import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
@@ -25,7 +26,7 @@ const AddForm: React.FC<Props> = ({ products, forceUpdate }): React.ReactElement
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [givenNumber, setGivenNumber] = useState('');
-    const [tranID, setTranID] = useState('');
+    const [tranID, setTranID] = useState(nanoid(8));
     const [paymentMethod, setPaymentMethod] = useState('');
     const [paymentStatus, setPaymentStatus] = useState('');
     const [qty, setQty] = useState<number | string>('');
