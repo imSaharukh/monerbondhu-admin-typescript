@@ -188,104 +188,96 @@ const AddForm: React.FC<Props> = ({ consultants, forceUpdate }) => {
                             )}
                         </FormControl>
 
-                        <FormControl fullWidth error={isSumbit && !service}>
-                            <InputLabel>Select Service</InputLabel>
-                            <Select
-                                value={service}
-                                onChange={(e) => {
-                                    if (typeof e.target.value === 'string') {
-                                        setService(e.target.value);
+                        {consultantName ? (
+                            <FormControl fullWidth error={isSumbit && !service}>
+                                <InputLabel>Select Service</InputLabel>
+                                <Select
+                                    value={service}
+                                    onChange={(e) => {
+                                        if (typeof e.target.value === 'string') {
+                                            setService(e.target.value);
+                                        }
+                                    }}
+                                >
+                                    {consultants[idx]?.service.map((s, index) => (
+                                        // eslint-disable-next-line react/no-array-index-key
+                                        <MenuItem key={index} value={JSON.stringify(s)}>
+                                            {`${s.name}-${s.mode}-${s.duration}-${s.fee}`}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {isSumbit && !service ? (
+                                    <FormHelperText>Please select a service</FormHelperText>
+                                ) : (
+                                    ''
+                                )}
+                            </FormControl>
+                        ) : null}
+
+                        {consultantName ? (
+                            <form noValidate>
+                                <FormLabel component="div" style={{ marginTop: 25 }}>
+                                    Select Date
+                                </FormLabel>
+                                <RadioGroup
+                                    aria-label="gender"
+                                    name="controlled-radio-buttons-group"
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                >
+                                    {consultants[idx] &&
+                                        consultants[idx].visitingDays[0] &&
+                                        JSON.parse(consultants[idx].visitingDays[0]).map(
+                                            (day: string) => (
+                                                <FormControlLabel
+                                                    key={day}
+                                                    value={day}
+                                                    control={<Radio size="small" />}
+                                                    label={day}
+                                                />
+                                            )
+                                        )}
+                                </RadioGroup>
+                            </form>
+                        ) : null}
+
+                        {consultantName ? (
+                            <form className={classes.container} noValidate>
+                                <TextField
+                                    id="time"
+                                    fullWidth
+                                    label={
+                                        <div
+                                            style={{
+                                                width: 300,
+                                            }}
+                                        >
+                                            Select Time from
+                                            <span style={{ color: 'orangered', margin: '0 5px' }}>
+                                                {consultants[idx]?.timeFrom}
+                                            </span>
+                                            to
+                                            <span style={{ color: 'orangered', margin: '0 5px' }}>
+                                                {consultants[idx]?.timeTo}
+                                            </span>
+                                        </div>
                                     }
-                                }}
-                            >
-                                {consultants[idx]?.service.map((s, index) => (
-                                    // eslint-disable-next-line react/no-array-index-key
-                                    <MenuItem key={index} value={JSON.stringify(s)}>
-                                        {`${s.name}-${s.mode}-${s.duration}-${s.fee}`}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                            {isSumbit && !service ? (
-                                <FormHelperText>Please select a service</FormHelperText>
-                            ) : (
-                                ''
-                            )}
-                        </FormControl>
-
-                        <form noValidate>
-                            {/* <TextField
-                                id="date"
-                                label="Select Date"
-                                type="date"
-                                // defaultValue="2017-05-24"
-                                error={isSumbit && !date}
-                                helperText={isSumbit && !date ? 'Please provide a date' : ''}
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                className={classes.textField}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            /> */}
-                            <FormLabel component="div" style={{ marginTop: 25 }}>
-                                Select Date
-                            </FormLabel>
-                            <RadioGroup
-                                aria-label="gender"
-                                name="controlled-radio-buttons-group"
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                            >
-                                {consultants[idx] &&
-                                    consultants[idx].visitingDays[0] &&
-                                    JSON.parse(consultants[idx].visitingDays[0]).map(
-                                        (day: string) => (
-                                            <FormControlLabel
-                                                key={day}
-                                                value={day}
-                                                control={<Radio size="small" />}
-                                                label={day}
-                                            />
-                                        )
-                                    )}
-                            </RadioGroup>
-                        </form>
-
-                        <form className={classes.container} noValidate>
-                            <TextField
-                                id="time"
-                                fullWidth
-                                label={
-                                    <div
-                                        style={{
-                                            width: 300,
-                                        }}
-                                    >
-                                        Select Time from
-                                        <span style={{ color: 'orangered', margin: '0 5px' }}>
-                                            {consultants[idx].timeFrom}
-                                        </span>
-                                        to
-                                        <span style={{ color: 'orangered', margin: '0 5px' }}>
-                                            {consultants[idx].timeTo}
-                                        </span>
-                                    </div>
-                                }
-                                type="time"
-                                // defaultValue="07:30"
-                                error={isSumbit && !time}
-                                helperText={isSumbit && !time ? 'Please provide a date' : ''}
-                                value={time}
-                                onChange={(e) => setTime(e.target.value)}
-                                className={classes.textField}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                inputProps={{
-                                    step: 60, // 1 min
-                                }}
-                            />
-                        </form>
+                                    type="time"
+                                    // defaultValue="07:30"
+                                    error={isSumbit && !time}
+                                    helperText={isSumbit && !time ? 'Please provide a date' : ''}
+                                    value={time}
+                                    onChange={(e) => setTime(e.target.value)}
+                                    className={classes.textField}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    inputProps={{
+                                        step: 60, // 1 min
+                                    }}
+                                />
+                            </form>
+                        ) : null}
 
                         <Divider style={{ margin: '20px 0' }} />
 

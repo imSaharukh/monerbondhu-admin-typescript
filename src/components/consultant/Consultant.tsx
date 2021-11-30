@@ -50,8 +50,6 @@ const Consultant = () => {
 
                 if (response) setIsLoading(false);
 
-                console.log(response.data);
-
                 setApiData([...response.data.data].reverse());
                 setDesignations(response.data.designations);
                 setServices(response.data.services);
