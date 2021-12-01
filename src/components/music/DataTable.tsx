@@ -8,11 +8,13 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
 import React, { useState } from 'react';
 import withTab from '../../container/tabLayout/TabLayout';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
 import AddForm from './AddForm';
+import EditMusicCard from './EditMusicCard';
 import MusicCard from './MusicCard';
 
 interface Props {
@@ -58,53 +60,14 @@ const createData = (
     musicKey: string
 ) => ({ id, image, category, subType, name, mp3, musicKey });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     table: {
         minWidth: 700,
-    },
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
     },
 }));
 
 const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElement => {
-    const classes = useStyles();
-
     const [isLoading, setIsLoading] = useState(false);
-
-    const handleDelete = async (id: string) => {
-        // eslint-disable-next-line no-restricted-globals
-        if (!confirm('Are you sure you want to delete this element?')) {
-            return;
-        }
-
-        setIsLoading(true);
-
-        const token = `Bearer ${localStorage.getItem('token')}`;
-
-        try {
-            const response = await axios.delete('/music', {
-                headers: { Authorization: token },
-                data: {
-                    id,
-                },
-            });
-
-            if (response) {
-                setIsLoading(false);
-                alert('Deleted Successfully');
-                forceUpdate();
-            }
-        } catch (err) {
-            setIsLoading(false);
-            // eslint-disable-next-line no-alert
-            alert(err?.response?.data?.message ?? 'Something went wrong');
-        }
-    };
 
     return (
         <>
@@ -116,6 +79,155 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                 Object.keys(apiData),
                 Object.keys(apiData).map((type) => {
                     const MusicComponent: React.FC = (): React.ReactElement => {
+                        const classes = useStyles();
+
+                        const [isEditing, setIsEditing] = useState(false);
+                        const [editingIdx, setEditingIdx] = useState(-1);
+
+                        const [name, setName] = useState('');
+                        const [category, setCategory] = useState('');
+                        const [subType, setSubType] = useState('');
+                        const [image, setImage] = useState<File | null>(null);
+                        const [music, setMusic] = useState<File | null>(null);
+
+                        const handleClose = () => {
+                            setIsEditing(false);
+                            setEditingIdx(-1);
+                        };
+
+                        const clearAll = () => {
+                            setName('');
+                            setCategory('');
+                            setSubType('');
+                            setImage(null);
+                            setMusic(null);
+                        };
+
+                        const handleDelete = async (id: string) => {
+                            // eslint-disable-next-line no-restricted-globals
+                            if (!confirm('Are you sure you want to delete this element?')) {
+                                return;
+                            }
+
+                            setIsLoading(true);
+
+                            const token = `Bearer ${localStorage.getItem('token')}`;
+
+                            try {
+                                const response = await axios.delete('/music', {
+                                    headers: { Authorization: token },
+                                    data: {
+                                        id,
+                                    },
+                                });
+
+                                if (response) {
+                                    setIsLoading(false);
+                                    alert('Deleted Successfully');
+                                    forceUpdate();
+                                }
+                            } catch (err) {
+                                setIsLoading(false);
+                                // eslint-disable-next-line no-alert
+                                alert(err?.response?.data?.message ?? 'Something went wrong');
+                            }
+                        };
+
+                        const handleEdit = async (id: string) => {
+                            if (!name || !category || !subType) {
+                                // eslint-disable-next-line no-alert
+                                alert('Empty field is not taken');
+                                return;
+                            }
+
+                            setIsEditing(false);
+                            setEditingIdx(-1);
+                            setIsLoading(true);
+
+                            const token = `Bearer ${localStorage.getItem('token')}`;
+
+                            let imageUrl = '';
+                            let musicUrl = '';
+
+                            if (image !== null) {
+                                const formData = new FormData();
+                                formData.append('image', image);
+
+                                const response = await axios.post('/upload', formData, {
+                                    headers: { Authorization: token },
+                                });
+
+                                imageUrl = response.data.image;
+                            }
+
+                            if (music !== null) {
+                                const formData = new FormData();
+                                formData.append('music', music);
+
+                                const response = await axios.post('/upload', formData, {
+                                    headers: { Authorization: token },
+                                });
+
+                                musicUrl = response.data.music;
+                            }
+
+                            const updateData: {
+                                name: string;
+                                category: string;
+                                subType: string;
+                                image?: string;
+                                music?: string;
+                            } = {
+                                name,
+                                category,
+                                subType,
+                            };
+
+                            if (imageUrl) {
+                                updateData.image = imageUrl;
+                            }
+
+                            if (musicUrl) {
+                                updateData.music = musicUrl;
+                            }
+
+                            try {
+                                const response = await axios.patch(`/music/${id}`, updateData, {
+                                    headers: { Authorization: token },
+                                });
+
+                                if (response) {
+                                    setIsLoading(false);
+                                    forceUpdate();
+
+                                    clearAll();
+                                }
+                            } catch (err) {
+                                setIsLoading(false);
+
+                                clearAll();
+
+                                // eslint-disable-next-line no-alert
+                                alert(err?.response?.data?.message ?? 'Something went wrong');
+                            }
+                        };
+
+                        const editButtonHandler = (
+                            editedData: {
+                                name: string;
+                                category: string;
+                                subtype: string;
+                            },
+                            idx: number
+                        ) => {
+                            setIsEditing(true);
+                            setEditingIdx(idx);
+
+                            setName(editedData.name);
+                            setCategory(editedData.category);
+                            setSubType(editedData.subtype);
+                        };
+
                         const data: {
                             _id: string;
                             name: string;
@@ -149,19 +261,52 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                     <TableHead>
                                         <TableRow>
                                             <StyledTableCell>Music</StyledTableCell>
+                                            <StyledTableCell align="right">Edit</StyledTableCell>
                                             <StyledTableCell align="right">Delete</StyledTableCell>
                                         </TableRow>
                                     </TableHead>
 
                                     <TableBody>
-                                        {rows.map((row) => (
+                                        {rows.map((row, idx) => (
                                             <StyledTableRow key={row.id}>
                                                 <StyledTableCell component="th" scope="row">
-                                                    <MusicCard
-                                                        image={row.image}
-                                                        subType={row.subType}
-                                                        name={row.name}
-                                                        mp3={row.mp3}
+                                                    {isEditing && editingIdx === idx ? (
+                                                        <EditMusicCard
+                                                            id={row.id}
+                                                            name={name}
+                                                            category={category}
+                                                            subType={subType}
+                                                            setName={setName}
+                                                            setCategory={setCategory}
+                                                            setSubType={setSubType}
+                                                            setImage={setImage}
+                                                            setMusic={setMusic}
+                                                            handleSubmit={handleEdit}
+                                                            cancel={handleClose}
+                                                        />
+                                                    ) : (
+                                                        <MusicCard
+                                                            image={row.image}
+                                                            subType={row.subType}
+                                                            name={row.name}
+                                                            mp3={row.mp3}
+                                                        />
+                                                    )}
+                                                </StyledTableCell>
+
+                                                <StyledTableCell align="right">
+                                                    <EditIcon
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() =>
+                                                            editButtonHandler(
+                                                                {
+                                                                    name: row.name,
+                                                                    category: row.category,
+                                                                    subtype: row.subType,
+                                                                },
+                                                                idx
+                                                            )
+                                                        }
                                                     />
                                                 </StyledTableCell>
 

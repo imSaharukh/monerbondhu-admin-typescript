@@ -411,6 +411,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                         />
                                     )}
                                 </StyledTableCell>
+
                                 <StyledTableCell align="right">
                                     <DeleteForever
                                         color="secondary"

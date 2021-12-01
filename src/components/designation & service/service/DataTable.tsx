@@ -1,4 +1,5 @@
 /* eslint-disable no-alert */
+import { TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -7,7 +8,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
 import React, { useState } from 'react';
 import axios from '../../../utils/axios';
 import Loader from '../../../utils/Loader';
@@ -54,12 +58,31 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
         marginTop: theme.spacing(2),
     },
+    textField: {
+        '& > *': {
+            fontSize: 13,
+        },
+    },
 }));
 
 const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElement => {
     const classes = useStyles();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingIdx, setEditingIdx] = useState(-1);
+    const [service, setService] = useState('');
+    const [description, setDescription] = useState('');
+
+    const handleClose = () => {
+        setIsEditing(false);
+        setEditingIdx(-1);
+    };
+
+    const clearAll = () => {
+        setService('');
+        setDescription('');
+    };
 
     const handleDelete = async (id: string) => {
         // eslint-disable-next-line no-restricted-globals
@@ -91,6 +114,58 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         }
     };
 
+    const handleEdit = async (id: string) => {
+        if (!service || !description) {
+            // eslint-disable-next-line no-alert
+            alert('Empty field is not taken');
+            return;
+        }
+
+        setIsEditing(false);
+        setEditingIdx(-1);
+        setIsLoading(true);
+
+        const token = `Bearer ${localStorage.getItem('token')}`;
+
+        try {
+            const response = await axios.patch(
+                `/consultent/service/${id}`,
+                { name: service, dis: description },
+                {
+                    headers: { Authorization: token },
+                }
+            );
+
+            if (response) {
+                setIsLoading(false);
+                forceUpdate();
+
+                clearAll();
+            }
+        } catch (err) {
+            setIsLoading(false);
+
+            clearAll();
+
+            // eslint-disable-next-line no-alert
+            alert(err?.response?.data?.message ?? 'Something went wrong');
+        }
+    };
+
+    const editButtonHandler = (
+        editedData: {
+            service: string;
+            description: string;
+        },
+        idx: number
+    ) => {
+        setIsEditing(true);
+        setEditingIdx(idx);
+
+        setService(editedData.service);
+        setDescription(editedData.description);
+    };
+
     // eslint-disable-next-line no-underscore-dangle
     const rows = apiData.map((data) => createData(data._id, data.name, data.dis));
 
@@ -104,19 +179,77 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                         <TableRow>
                             <StyledTableCell>Service</StyledTableCell>
                             <StyledTableCell>Description</StyledTableCell>
+                            <StyledTableCell align="right">Edit</StyledTableCell>
                             <StyledTableCell align="right">Delete</StyledTableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {rows.map((row) => (
+                        {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.service}
+                                    {isEditing && editingIdx === idx ? (
+                                        <TextField
+                                            value={service}
+                                            onChange={(e) => setService(e.target.value)}
+                                            className={classes.textField}
+                                        />
+                                    ) : (
+                                        row.service
+                                    )}
                                 </StyledTableCell>
 
                                 <StyledTableCell component="th" scope="row">
-                                    {row.description}
+                                    {isEditing && editingIdx === idx ? (
+                                        <TextField
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            className={classes.textField}
+                                        />
+                                    ) : (
+                                        row.description
+                                    )}
+                                </StyledTableCell>
+
+                                <StyledTableCell align="right">
+                                    {isEditing && editingIdx === idx ? (
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'flex-end',
+                                            }}
+                                        >
+                                            <ClearIcon
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    color: 'red',
+                                                    marginRight: 7,
+                                                }}
+                                                onClick={() => handleClose()}
+                                            />
+                                            <CheckIcon
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    color: 'green',
+                                                }}
+                                                onClick={() => handleEdit(row.id)}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <EditIcon
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() =>
+                                                editButtonHandler(
+                                                    {
+                                                        service: row.service,
+                                                        description: row.description,
+                                                    },
+                                                    idx
+                                                )
+                                            }
+                                        />
+                                    )}
                                 </StyledTableCell>
 
                                 <StyledTableCell align="right">

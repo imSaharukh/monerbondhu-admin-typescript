@@ -48,11 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 // eslint-disable-next-line no-undef
 const withTab = (tabNames: string[], Components: React.FC[], color: string = '#566474') => {
-    console.log('in with tab');
-
     const TabLayout: React.FC = (): React.ReactElement => {
-        console.log('in tab');
-
         const classes = useStyles();
         const [value, setValue] = useState(0);
 
