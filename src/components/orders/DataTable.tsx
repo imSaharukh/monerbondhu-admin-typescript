@@ -179,6 +179,7 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
             clearAll();
 
             // eslint-disable-next-line no-alert
+            // @ts-ignore
             alert(err?.response?.data?.message ?? 'Something went wrong');
         }
     };

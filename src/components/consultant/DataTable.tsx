@@ -200,6 +200,7 @@ const DataTable: React.FC<Props> = ({
             }
         } catch (err) {
             setIsLoading(false);
+            // @ts-ignore
             alert(err?.response?.data?.message ?? 'Something went wrong');
         }
     };
@@ -270,6 +271,7 @@ const DataTable: React.FC<Props> = ({
             clearAll();
 
             // eslint-disable-next-line no-alert
+            // @ts-ignore
             alert(err?.response?.data?.message ?? 'Something went wrong');
         }
     };

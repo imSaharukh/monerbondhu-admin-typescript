@@ -120,6 +120,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         } catch (err) {
             setIsLoading(false);
             // eslint-disable-next-line no-alert
+            // @ts-ignore
             alert(err?.response?.data?.message ?? 'Something went wrong');
         }
     };
@@ -159,6 +160,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             clearAll();
 
             // eslint-disable-next-line no-alert
+            // @ts-ignore
             alert(err?.response?.data?.message ?? 'Something went wrong');
         }
     };
