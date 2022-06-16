@@ -148,6 +148,7 @@ const DataTable: React.FC<Props> = ({
     const [timeFrom, setTimeFrom] = useState('');
     const [timeTo, setTimeTo] = useState('');
     const [description, setDescription] = useState('');
+    const [position, setPosition] = useState<number>(0);
     const [newServices, setNewServices] = useState<
         {
             _id?: string;
@@ -172,6 +173,7 @@ const DataTable: React.FC<Props> = ({
         setTimeTo('');
         setDescription('');
         setNewServices([]);
+        setPosition(0);
     };
 
     const handleDelete = async (id: string) => {
@@ -232,6 +234,7 @@ const DataTable: React.FC<Props> = ({
         }
 
         const updateData: {
+            position: number;
             name: string;
             designation: string;
             visitingDays: string;
@@ -248,6 +251,7 @@ const DataTable: React.FC<Props> = ({
             timeTo,
             description,
             service: newServices,
+            position,
         };
 
         if (imageUrl) {
@@ -284,12 +288,13 @@ const DataTable: React.FC<Props> = ({
             timeFrom: string;
             timeTo: string;
             description: string;
+            position: number;
         },
         idx: number
     ) => {
         setIsEditing(true);
         setEditingIdx(idx);
-
+        setPosition(editedData.position);
         setName(editedData.name);
         setDesignation(editedData.designation);
         setVisitingDays(editedData.visitingDays);
@@ -302,6 +307,7 @@ const DataTable: React.FC<Props> = ({
         createData(
             // eslint-disable-next-line no-underscore-dangle
             data._id,
+            // data.position,
             data.image,
             data.name,
             data.designation,
@@ -329,6 +335,7 @@ const DataTable: React.FC<Props> = ({
                 <Table className={classes.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
+                            <StyledTableCell>Position</StyledTableCell>
                             <StyledTableCell>Image</StyledTableCell>
                             <StyledTableCell>Name</StyledTableCell>
                             <StyledTableCell>Designation</StyledTableCell>
@@ -347,6 +354,24 @@ const DataTable: React.FC<Props> = ({
                     <TableBody>
                         {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
+                                <StyledTableCell>
+                                    {isEditing && editingIdx === idx ? (
+                                        <FormControl className={classes.formControl}>
+                                            <input
+                                                color="primary"
+                                                type="number"
+                                                onChange={(e) =>
+                                                    setPosition(
+                                                        e.target.value ? Number(e.target.value) : 0
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                    ) : (
+                                        // row.position
+                                        idx + 1
+                                    )}
+                                </StyledTableCell>
                                 <StyledTableCell>
                                     {isEditing && editingIdx === idx ? (
                                         <span style={{ display: 'block', marginTop: 15 }}>
@@ -555,6 +580,8 @@ const DataTable: React.FC<Props> = ({
                                                         visitingDays: JSON.parse(
                                                             row.visitingDays[0]
                                                         ),
+                                                        position: 1,
+                                                        // position: row.position,
                                                         timeFrom: row.timeFrom,
                                                         timeTo: row.timeTo,
                                                         description: row.description,

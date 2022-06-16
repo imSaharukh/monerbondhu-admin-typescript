@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '../../container/appLayout/AppLayout';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
@@ -73,7 +73,7 @@ const Appointments = () => {
         };
         apiResponse();
     }, [update]);
-
+    console.log(apiData);
     return (
         <AppLayout consultantOpen dawerOpen>
             <Loader open={isLoading} />

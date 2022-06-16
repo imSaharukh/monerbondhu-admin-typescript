@@ -36,7 +36,6 @@ const Consultant = () => {
     const [update, setUpdate] = useState(0);
 
     const forceUpdate = () => setUpdate((i) => i + 1);
-    console.log(apiData);
 
     useEffect(() => {
         const apiResponse = async () => {
