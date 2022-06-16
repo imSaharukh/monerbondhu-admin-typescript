@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '../../container/appLayout/AppLayout';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
@@ -36,6 +36,7 @@ const Consultant = () => {
     const [update, setUpdate] = useState(0);
 
     const forceUpdate = () => setUpdate((i) => i + 1);
+    console.log(apiData);
 
     useEffect(() => {
         const apiResponse = async () => {
