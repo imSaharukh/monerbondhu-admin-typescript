@@ -55,6 +55,7 @@ const StyledTableRow = withStyles((theme) => ({
 
 const createData = (
     id: string,
+    // position: number,
     image: string,
     name: string,
     designation: string,
@@ -77,6 +78,7 @@ const createData = (
     id,
     image,
     name,
+    // position,
     designation,
     visitingDays,
     timeFrom,
@@ -294,7 +296,7 @@ const DataTable: React.FC<Props> = ({
     ) => {
         setIsEditing(true);
         setEditingIdx(idx);
-        setPosition(editedData.position);
+        // setPosition(editedData.position);
         setName(editedData.name);
         setDesignation(editedData.designation);
         setVisitingDays(editedData.visitingDays);
@@ -580,8 +582,8 @@ const DataTable: React.FC<Props> = ({
                                                         visitingDays: JSON.parse(
                                                             row.visitingDays[0]
                                                         ),
-                                                        position: 1,
-                                                        // position: row.position,
+
+                                                        position,
                                                         timeFrom: row.timeFrom,
                                                         timeTo: row.timeTo,
                                                         description: row.description,

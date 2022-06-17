@@ -5,6 +5,7 @@ import Loader from '../../utils/Loader';
 import DataTable from './DataTable';
 
 export interface ConsultantData {
+    // position: number;
     review: number | string;
     reviewCount: number;
     _id: string;
@@ -51,6 +52,7 @@ const Consultant = () => {
                 if (response) setIsLoading(false);
 
                 setApiData([...response.data.data].reverse());
+
                 setDesignations(response.data.designations);
                 setServices(response.data.services);
             } catch (err) {
