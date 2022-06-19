@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import { TextField } from '@material-ui/core';
+import { FormControl, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -53,12 +53,14 @@ const createData = (
     description: string,
     price: string | number,
     image: string
+    // position: number
 ) => ({
     id,
     title,
     description,
     price,
     image,
+    // position
 });
 
 const useStyles = makeStyles({
@@ -105,6 +107,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [editingIdx, setEditingIdx] = useState(-1);
     //   const [isSumbit, setIsSubmit] = useState(false);
 
+    const [position, setPosition] = useState(0);
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState<string | number>('');
     const [description, setDescription] = useState('');
@@ -155,7 +158,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
 
     const handleEdit = async (id: string) => {
         // setIsSubmit(true);
-        if (!title || !price || !description) return;
+        if (!title || !price || !description || !position) return;
 
         setIsEditing(false);
         setEditingIdx(-1);
@@ -182,11 +185,13 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             price: string | number;
             name: string;
             image?: string;
+            position: number;
         } = {
             id,
             dis: description,
             price,
             name: title,
+            position,
         };
 
         if (imageUrl) {
@@ -221,20 +226,29 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             title: string;
             price: string | number;
             description: string;
+            position: number;
         },
         idx: number
     ) => {
         setIsEditing(true);
         setEditingIdx(idx);
 
+        setPosition(editedData.position);
         setTitle(editedData.title);
         setPrice(editedData.price);
         setDescription(editedData.description);
     };
 
     const rows = apiData.map((data) =>
-        // eslint-disable-next-line no-underscore-dangle
-        createData(data._id, data.name, data.dis, data.price, data.image)
+        createData(
+            // eslint-disable-next-line no-underscore-dangle
+            data._id,
+            data.name,
+            data.dis,
+            data.price,
+            data.image
+            // data.position
+        )
     );
 
     return (
@@ -247,6 +261,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                 <Table className={classes.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
+                            <StyledTableCell>Position</StyledTableCell>
                             <StyledTableCell>Image</StyledTableCell>
                             <StyledTableCell>Name</StyledTableCell>
                             <StyledTableCell>Price</StyledTableCell>
@@ -259,6 +274,24 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                     <TableBody>
                         {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
+                                <StyledTableCell>
+                                    {isEditing && editingIdx === idx ? (
+                                        <FormControl className="">
+                                            <input
+                                                color="primary"
+                                                type="number"
+                                                onChange={(e) =>
+                                                    setPosition(
+                                                        e.target.value ? Number(e.target.value) : 0
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                    ) : (
+                                        // row.position
+                                        idx + 1
+                                    )}
+                                </StyledTableCell>
                                 <StyledTableCell>
                                     {isEditing && editingIdx === idx ? (
                                         <span style={{ display: 'block', marginTop: 15 }}>
@@ -380,6 +413,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                         title: row.title,
                                                         price: row.price,
                                                         description: row.description,
+                                                        position,
                                                     },
                                                     idx
                                                 )

@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import { TextField } from '@material-ui/core';
+import { FormControl, TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -42,11 +42,18 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
-const createData = (id: string, title: string, videoLink: string, image: string) => ({
+const createData = (
+    id: string,
+    title: string,
+    videoLink: string,
+    image: string
+    // position: number
+) => ({
     id,
     title,
     videoLink,
     image,
+    // position,
 });
 
 const useStyles = makeStyles({
@@ -71,6 +78,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [isLoading, setIsLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingIdx, setEditingIdx] = useState(-1);
+    const [position, setPosition] = useState(0);
 
     const [title, setTitle] = useState('');
     const [youtubeLink, setYoutubeLink] = useState('');
@@ -130,6 +138,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             id,
             name: title,
             ytlink: youtubeLink,
+            position,
         };
 
         const token = `Bearer ${localStorage.getItem('token')}`;
@@ -160,6 +169,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         editedData: {
             title: string;
             youtubeLink: string;
+            position: number;
         },
         idx: number
     ) => {
@@ -167,11 +177,22 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setEditingIdx(idx);
 
         setTitle(editedData.title);
+        setPosition(editedData.position);
         setYoutubeLink(editedData.youtubeLink);
     };
 
-    // eslint-disable-next-line no-underscore-dangle
-    const rows = apiData.map((data) => createData(data._id, data.name, data.ytlink, data.image));
+    console.log(apiData);
+
+    const rows = apiData.map((data) =>
+        createData(
+            // eslint-disable-next-line no-underscore-dangle
+            data._id,
+            data.name,
+            data.ytlink,
+            data.image
+            // data.position
+        )
+    );
 
     return (
         <>
@@ -183,6 +204,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                 <Table className={classes.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
+                            <StyledTableCell>Position</StyledTableCell>
                             <StyledTableCell>Image</StyledTableCell>
                             <StyledTableCell>Title</StyledTableCell>
                             <StyledTableCell align="right">Edit</StyledTableCell>
@@ -193,6 +215,24 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                     <TableBody>
                         {rows.map((row, idx) => (
                             <StyledTableRow key={row.id}>
+                                <StyledTableCell>
+                                    {isEditing && editingIdx === idx ? (
+                                        <FormControl className="">
+                                            <input
+                                                color="primary"
+                                                type="number"
+                                                onChange={(e) =>
+                                                    setPosition(
+                                                        e.target.value ? Number(e.target.value) : 0
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+                                    ) : (
+                                        // row.position
+                                        idx + 1
+                                    )}
+                                </StyledTableCell>
                                 <StyledTableCell>
                                     {/* eslint-disable-next-line no-nested-ternary */}
                                     {isEditing && editingIdx === idx ? (
@@ -268,6 +308,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                     {
                                                         title: row.title,
                                                         youtubeLink: row.videoLink,
+                                                        // position: row.position,
+                                                        position,
                                                     },
                                                     idx
                                                 )

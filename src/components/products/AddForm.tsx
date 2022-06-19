@@ -29,6 +29,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
     const [isLoading, setIsLoading] = useState(false);
     const [isSumbit, setIsSubmit] = useState(false);
 
+    const [position, setPosition] = useState(0);
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [dis, setDis] = useState('');
@@ -55,7 +56,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
         e.preventDefault();
         setIsSubmit(true);
 
-        if (!name || !price || !dis || !image) return;
+        if (!name || !price || !dis || !image || !position) return;
 
         setOpen(false);
 
@@ -64,6 +65,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
         const bodyFormData = new FormData();
         bodyFormData.append('name', name);
         bodyFormData.append('dis', dis);
+        bodyFormData.append('position', `${position}`);
         bodyFormData.append('price', price);
         bodyFormData.append('image', image);
 
@@ -123,6 +125,20 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
                             fullWidth
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                        />
+
+                        <TextField
+                            autoFocus
+                            error={isSumbit && !position}
+                            helperText={isSumbit && !position ? 'Please add a name' : ''}
+                            margin="dense"
+                            name="position"
+                            label="Position"
+                            fullWidth
+                            value={position}
+                            onChange={(e) =>
+                                setPosition(e.target.value ? Number(e.target.value) : 0)
+                            }
                         />
 
                         <TextField
