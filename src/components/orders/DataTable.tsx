@@ -53,7 +53,7 @@ const createData = (
     orderTime: string,
     quantity: number | string,
     userNumber: string,
-    // position: number,
+    position: number,
     product: {
         _id: string;
         name: string;
@@ -73,7 +73,7 @@ const createData = (
     quantity,
     userNumber,
     product,
-    // position
+    position,
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -127,6 +127,7 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
         setOrderStatus('');
         setUpdatedProduct(null);
         setIsSubmit(false);
+        setPosition(0);
     };
 
     const handleEdit = async (id: string) => {
@@ -232,8 +233,8 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
             data.orderTime,
             data.qty,
             data.userNumber,
+            data.position,
             data.product
-            // data.position
         )
     );
 
@@ -274,15 +275,12 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                                 color="primary"
                                                 type="number"
                                                 onChange={(e) =>
-                                                    setPosition(
-                                                        e.target.value ? Number(e.target.value) : 0
-                                                    )
+                                                    setPosition(Number(e.target.value))
                                                 }
                                             />
                                         </FormControl>
                                     ) : (
-                                        // row.position
-                                        idx + 1
+                                        row.position
                                     )}
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -486,6 +484,7 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                             onClick={() =>
                                                 editButtonHandler(
                                                     {
+                                                        position: row.position,
                                                         name: row.name,
                                                         givenNumber: row.givenNumber,
                                                         address: row.address,
@@ -495,7 +494,6 @@ const DataTable: React.FC<Props> = ({ apiData, products, forceUpdate }): React.R
                                                         paymentStatus: row.paymentStatus,
                                                         orderStatus: row.orderStatus,
                                                         product: row.product,
-                                                        position,
                                                     },
                                                     idx
                                                 )

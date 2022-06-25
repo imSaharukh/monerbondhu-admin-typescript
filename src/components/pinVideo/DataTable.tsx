@@ -46,14 +46,14 @@ const createData = (
     id: string,
     title: string,
     videoLink: string,
-    image: string
-    // position: number
+    image: string,
+    position: number
 ) => ({
     id,
     title,
     videoLink,
     image,
-    // position,
+    position,
 });
 
 const useStyles = makeStyles({
@@ -181,16 +181,14 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setYoutubeLink(editedData.youtubeLink);
     };
 
-    console.log(apiData);
-
     const rows = apiData.map((data) =>
         createData(
             // eslint-disable-next-line no-underscore-dangle
             data._id,
             data.name,
             data.ytlink,
-            data.image
-            // data.position
+            data.image,
+            data.position
         )
     );
 
@@ -222,15 +220,12 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                 color="primary"
                                                 type="number"
                                                 onChange={(e) =>
-                                                    setPosition(
-                                                        e.target.value ? Number(e.target.value) : 0
-                                                    )
+                                                    setPosition(Number(e.target.value))
                                                 }
                                             />
                                         </FormControl>
                                     ) : (
-                                        // row.position
-                                        idx + 1
+                                        row.position
                                     )}
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -308,8 +303,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                     {
                                                         title: row.title,
                                                         youtubeLink: row.videoLink,
-                                                        // position: row.position,
-                                                        position,
+                                                        position: row.position,
                                                     },
                                                     idx
                                                 )

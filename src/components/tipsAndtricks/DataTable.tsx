@@ -55,8 +55,8 @@ const createData = (
     isVideo: boolean,
     videoLink: string,
     image: string,
-    viewCount: number | string
-    // position:number,
+    viewCount: number | string,
+    position: string
 ) => ({
     id,
     title,
@@ -66,7 +66,7 @@ const createData = (
     videoLink,
     image,
     viewCount,
-    // position
+    position,
 });
 
 const useStyles = makeStyles({
@@ -111,7 +111,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [isLoading, setIsLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingIdx, setEditingIdx] = useState(-1);
-    const [position, setPosition] = useState(0);
+    const [position, setPosition] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [image, setImage] = useState<File | null>(null);
@@ -125,6 +125,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setTitle('');
         setContent('');
         setImage(null);
+        setPosition('');
     };
 
     const handleDelete = async (id: string) => {
@@ -189,7 +190,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             title: string;
             content: string;
             image?: string;
-            position: number;
+            position: string;
         } = {
             id,
             title,
@@ -227,12 +228,14 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         editedData: {
             title: string;
             content: string;
+            position: string;
         },
         idx: number
     ) => {
         setIsEditing(true);
         setEditingIdx(idx);
 
+        setPosition(editedData.position);
         setTitle(editedData.title);
         setContent(editedData.content);
     };
@@ -247,10 +250,11 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             data.isVideo,
             data.videoLink,
             data.image,
-            data.viewCount
-            // data.position
+            data.viewCount,
+            data.position
         )
     );
+    console.log(position);
 
     return (
         <>
@@ -283,16 +287,11 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                             <input
                                                 color="primary"
                                                 type="number"
-                                                onChange={(e) =>
-                                                    setPosition(
-                                                        e.target.value ? Number(e.target.value) : 0
-                                                    )
-                                                }
+                                                onChange={(e) => setPosition(e.target.value)}
                                             />
                                         </FormControl>
                                     ) : (
-                                        // row.position
-                                        idx + 1
+                                        row.position
                                     )}
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -429,6 +428,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                 editButtonHandler(
                                                     {
                                                         title: row.title,
+                                                        position: row.position,
                                                         content: row.content,
                                                     },
                                                     idx

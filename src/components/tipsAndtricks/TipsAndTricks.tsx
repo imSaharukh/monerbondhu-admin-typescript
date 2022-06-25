@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '../../container/appLayout/AppLayout';
 import axios from '../../utils/axios';
 import Loader from '../../utils/Loader';
@@ -13,6 +13,7 @@ export interface TipsAndTricksData {
     content: string;
     videoLink: string;
     image: string;
+    position: string;
 }
 
 const TipsAndTricks = () => {
@@ -47,6 +48,7 @@ const TipsAndTricks = () => {
         };
         apiResponse();
     }, [update]);
+    console.log(apiData);
 
     return (
         <AppLayout dawerOpen>

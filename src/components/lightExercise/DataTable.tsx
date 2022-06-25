@@ -48,8 +48,8 @@ const createData = (
     videoLink: string,
     image: string,
     viewCount: string | number,
-    dateTime: string
-    // position: number
+    dateTime: string,
+    position: number
 ) => ({
     id,
     title,
@@ -57,7 +57,7 @@ const createData = (
     image,
     viewCount,
     dateTime,
-    // position
+    position,
 });
 
 const useStyles = makeStyles({
@@ -192,8 +192,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             data.ytlink,
             data.image,
             data.viewCount,
-            data.DateTime
-            // data.position
+            data.DateTime,
+            data.position
         )
     );
 
@@ -235,8 +235,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                             />
                                         </FormControl>
                                     ) : (
-                                        // row.position
-                                        idx + 1
+                                        row.position
                                     )}
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -324,7 +323,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                     {
                                                         title: row.title,
                                                         youtubeLink: row.videoLink,
-                                                        position,
+                                                        position: row.position,
                                                     },
                                                     idx
                                                 )

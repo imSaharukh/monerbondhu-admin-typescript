@@ -5,7 +5,7 @@ import Loader from '../../utils/Loader';
 import DataTable from './DataTable';
 
 export interface ConsultantData {
-    // position: number;
+    position: number;
     review: number | string;
     reviewCount: number;
     _id: string;
@@ -37,6 +37,7 @@ const Consultant = () => {
     const [update, setUpdate] = useState(0);
 
     const forceUpdate = () => setUpdate((i) => i + 1);
+    // console.log(apiData);
 
     useEffect(() => {
         const apiResponse = async () => {

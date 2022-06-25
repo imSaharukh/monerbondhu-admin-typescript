@@ -55,7 +55,7 @@ const StyledTableRow = withStyles((theme) => ({
 
 const createData = (
     id: string,
-    // position: number,
+    position: number,
     image: string,
     name: string,
     designation: string,
@@ -78,7 +78,7 @@ const createData = (
     id,
     image,
     name,
-    // position,
+    position,
     designation,
     visitingDays,
     timeFrom,
@@ -210,7 +210,15 @@ const DataTable: React.FC<Props> = ({
     };
 
     const handleEdit = async (id: string) => {
-        if (!name || !designation || !visitingDays.length || !timeFrom || !timeTo || !description) {
+        if (
+            !name ||
+            !designation ||
+            !visitingDays.length ||
+            !timeFrom ||
+            !timeTo ||
+            !description ||
+            !position
+        ) {
             // eslint-disable-next-line no-alert
             alert('Empty field is not taken');
             return;
@@ -296,7 +304,7 @@ const DataTable: React.FC<Props> = ({
     ) => {
         setIsEditing(true);
         setEditingIdx(idx);
-        // setPosition(editedData.position);
+        setPosition(editedData.position);
         setName(editedData.name);
         setDesignation(editedData.designation);
         setVisitingDays(editedData.visitingDays);
@@ -309,7 +317,7 @@ const DataTable: React.FC<Props> = ({
         createData(
             // eslint-disable-next-line no-underscore-dangle
             data._id,
-            // data.position,
+            data.position,
             data.image,
             data.name,
             data.designation,
@@ -370,8 +378,8 @@ const DataTable: React.FC<Props> = ({
                                             />
                                         </FormControl>
                                     ) : (
-                                        // row.position
-                                        idx + 1
+                                        row.position
+                                        // idx + 1
                                     )}
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -583,7 +591,7 @@ const DataTable: React.FC<Props> = ({
                                                             row.visitingDays[0]
                                                         ),
 
-                                                        position,
+                                                        position: row.position,
                                                         timeFrom: row.timeFrom,
                                                         timeTo: row.timeTo,
                                                         description: row.description,
