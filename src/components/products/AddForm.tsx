@@ -41,6 +41,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
         setDis('');
         setImage(null);
         setIsSubmit(false);
+        setPosition(0);
     };
 
     const handleClickOpen = () => {
@@ -136,9 +137,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
                             label="Position"
                             fullWidth
                             value={position}
-                            onChange={(e) =>
-                                setPosition(e.target.value ? Number(e.target.value) : 0)
-                            }
+                            onChange={(e) => setPosition(Number(e.target.value))}
                         />
 
                         <TextField

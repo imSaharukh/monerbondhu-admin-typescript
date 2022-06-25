@@ -52,15 +52,15 @@ const createData = (
     title: string,
     description: string,
     price: string | number,
-    image: string
-    // position: number
+    image: string,
+    position: number
 ) => ({
     id,
     title,
     description,
     price,
     image,
-    // position
+    position,
 });
 
 const useStyles = makeStyles({
@@ -123,6 +123,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setPrice('');
         setDescription('');
         setImage(null);
+        setPosition(0);
     };
 
     const handleDelete = async (id: string) => {
@@ -246,8 +247,8 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             data.name,
             data.dis,
             data.price,
-            data.image
-            // data.position
+            data.image,
+            data.position
         )
     );
 
@@ -281,15 +282,12 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                 color="primary"
                                                 type="number"
                                                 onChange={(e) =>
-                                                    setPosition(
-                                                        e.target.value ? Number(e.target.value) : 0
-                                                    )
+                                                    setPosition(Number(e.target.value))
                                                 }
                                             />
                                         </FormControl>
                                     ) : (
-                                        // row.position
-                                        idx + 1
+                                        row.position
                                     )}
                                 </StyledTableCell>
                                 <StyledTableCell>
@@ -413,7 +411,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                                         title: row.title,
                                                         price: row.price,
                                                         description: row.description,
-                                                        position,
+                                                        position: row.position,
                                                     },
                                                     idx
                                                 )

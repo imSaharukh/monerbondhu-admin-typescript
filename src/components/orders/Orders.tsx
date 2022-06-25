@@ -25,6 +25,7 @@ export interface OrdersData {
         dis: string;
         price: number | string;
         image: string;
+        position: number;
     };
     userNumber: string;
 }

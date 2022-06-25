@@ -60,6 +60,7 @@ const createData = (
         dis: string;
         price: number | string;
         image: string;
+        position: number;
     }
 ) => ({
     id,

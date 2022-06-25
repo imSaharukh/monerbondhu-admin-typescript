@@ -10,6 +10,7 @@ export interface ProductsData {
     dis: string;
     price: string | number;
     image: string;
+    position: number;
 }
 
 const Products = () => {

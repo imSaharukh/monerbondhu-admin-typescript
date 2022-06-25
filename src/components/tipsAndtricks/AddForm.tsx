@@ -69,7 +69,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
         bodyFormData.append('title', title);
         bodyFormData.append('content', content);
         bodyFormData.append('isVideo', `${isVideo}`);
-        bodyFormData.append('position', position);
+        bodyFormData.append('position', `${position}`);
         bodyFormData.append('videoLink', videoLink);
         if (image !== null) {
             bodyFormData.append('image', image);
