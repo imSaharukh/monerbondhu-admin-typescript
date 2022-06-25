@@ -13,7 +13,7 @@ export interface TipsAndTricksData {
     content: string;
     videoLink: string;
     image: string;
-    position: string;
+    position: number;
 }
 
 const TipsAndTricks = () => {
@@ -48,7 +48,6 @@ const TipsAndTricks = () => {
         };
         apiResponse();
     }, [update]);
-    console.log(apiData);
 
     return (
         <AppLayout dawerOpen>

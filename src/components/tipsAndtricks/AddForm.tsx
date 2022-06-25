@@ -29,7 +29,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSumbit, setIsSubmit] = useState(false);
-    const [position, setPosition] = useState('');
+    const [position, setPosition] = useState(0);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isVideo, setIsVideo] = useState(false);
@@ -43,7 +43,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
         setVideoLink('');
         setImage(null);
         setIsSubmit(false);
-        setPosition('');
+        setPosition(0);
     };
 
     const handleClickOpen = () => {
@@ -143,7 +143,7 @@ const AddForm: React.FC<Props> = ({ forceUpdate }): React.ReactElement => {
                             label="Position"
                             fullWidth
                             value={position}
-                            onChange={(e) => setPosition(e.target.value)}
+                            onChange={(e) => setPosition(Number(e.target.value))}
                         />
 
                         <FormControlLabel

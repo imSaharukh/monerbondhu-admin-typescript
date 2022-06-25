@@ -56,7 +56,7 @@ const createData = (
     videoLink: string,
     image: string,
     viewCount: number | string,
-    position: string
+    position: number
 ) => ({
     id,
     title,
@@ -111,7 +111,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
     const [isLoading, setIsLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingIdx, setEditingIdx] = useState(-1);
-    const [position, setPosition] = useState('');
+    const [position, setPosition] = useState(0);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [image, setImage] = useState<File | null>(null);
@@ -125,7 +125,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         setTitle('');
         setContent('');
         setImage(null);
-        setPosition('');
+        setPosition(0);
     };
 
     const handleDelete = async (id: string) => {
@@ -190,7 +190,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
             title: string;
             content: string;
             image?: string;
-            position: string;
+            position: number;
         } = {
             id,
             title,
@@ -228,7 +228,7 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
         editedData: {
             title: string;
             content: string;
-            position: string;
+            position: number;
         },
         idx: number
     ) => {
@@ -287,7 +287,9 @@ const DataTable: React.FC<Props> = ({ apiData, forceUpdate }): React.ReactElemen
                                             <input
                                                 color="primary"
                                                 type="number"
-                                                onChange={(e) => setPosition(e.target.value)}
+                                                onChange={(e) =>
+                                                    setPosition(Number(e.target.value))
+                                                }
                                             />
                                         </FormControl>
                                     ) : (
